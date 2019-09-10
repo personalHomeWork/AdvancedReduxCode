@@ -8,7 +8,7 @@ beforeEach(() => {
   moxios.install();
   moxios.stubRequest('http://jsonplaceholder.typicode.com/comments', {
     status: 200,
-    response: [{name: 'Fetched #1'}, {name: 'Fetched #1'}]
+    response: [{name: 'Fetched #1'}, {name: 'Fetched #2'}]
   });
 });
 
@@ -16,7 +16,7 @@ afterEach(() => {
   moxios.uninstall();
 });
 
-it('can fetch a list of comments and display them', () => {
+it('can fetch a list of comments and display them', (done) => {
     // Attempt to render the *entire* app
     const wrapped = mount(
       <Root>
@@ -27,6 +27,13 @@ it('can fetch a list of comments and display them', () => {
     // find the 'fetchComments' button and click it
     wrapped.find('.fetch-comments').simulate('click');
 
-    // Expect to find a list of comments!
-    expect(wrapped.find('li').length).toEqual(2);
+    // Pause
+    setTimeout(() => {
+      wrapped.update();
+      // Expect to find a list of comments!
+      expect(wrapped.find('li').length).toEqual(2);
+
+      done();
+      wrapped.unmount();
+    }, 100);
 });
